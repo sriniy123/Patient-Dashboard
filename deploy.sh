@@ -42,30 +42,32 @@ echo "Project ID: $PROJECT_ID"
 echo "App Name: $APP_NAME"
 echo "Region: $REGION"
 
-# Configure docker auth
-echo "Configuring docker authentication..."
-gcloud auth configure-docker --quiet
+# Enable Cloud Build and Artifact Registry APIs
+echo "Enabling Cloud Build and Artifact Registry APIs..."
+gcloud services enable cloudbuild.googleapis.com artifactregistry.googleapis.com
 
-# 3. Build the Docker Image
-echo "Building Docker image..."
-# Check for M1/M2 Mac to ensure correct platform build
-ARCH=$(uname -m)
-PLATFORM_FLAG=""
-if [[ "$ARCH" == "arm64" ]]; then
-    echo "Detected Apple Silicon. Adding --platform linux/amd64..."
-    PLATFORM_FLAG="--platform linux/amd64"
+# 3. Create Artifact Registry Repository
+REPO_NAME="patient-dashboard-repo"
+echo "Ensuring Artifact Registry repository exists..."
+if ! gcloud artifacts repositories describe $REPO_NAME --location=$REGION &>/dev/null; then
+    echo "Creating repository $REPO_NAME..."
+    gcloud artifacts repositories create $REPO_NAME \
+        --repository-format=docker \
+        --location=$REGION \
+        --description="Docker repository for Patient Dashboard"
+else
+    echo "Repository $REPO_NAME already exists."
 fi
 
-docker build $PLATFORM_FLAG -t gcr.io/$PROJECT_ID/$APP_NAME:latest .
-
-# 4. Push the Image to Container Registry
-echo "Pushing image to GCR..."
-docker push gcr.io/$PROJECT_ID/$APP_NAME:latest
+# 4. Build and Push the Image using Cloud Build
+IMAGE_URL="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$APP_NAME:latest"
+echo "Building and Pushing image to $IMAGE_URL using Cloud Build..."
+gcloud builds submit --tag $IMAGE_URL .
 
 # 5. Deploy to Cloud Run
 echo "Deploying to Cloud Run..."
 gcloud run deploy $APP_NAME \
-  --image gcr.io/$PROJECT_ID/$APP_NAME:latest \
+  --image $IMAGE_URL \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated
