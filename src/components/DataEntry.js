@@ -33,6 +33,19 @@ export default function DataEntry({ data, onChange, onSave }) {
             </div>
 
             <div className="input-group">
+                <label className="label" htmlFor="zipCode">Zip Code</label>
+                <input
+                    type="text"
+                    id="zipCode"
+                    className="input"
+                    placeholder="e.g. 90210"
+                    value={data.zipCode || ""}
+                    onChange={(e) => onChange("zipCode", e.target.value)}
+                    maxLength={5}
+                />
+            </div>
+
+            <div className="input-group">
                 <label className="label" htmlFor="symptoms">Daily Symptoms</label>
                 <div style={{ marginBottom: '0.5rem' }}>
                     <label htmlFor="symptomsDate" style={{ fontSize: '0.9rem', color: '#64748B', display: 'block', marginBottom: '0.25rem' }}>

@@ -6,10 +6,15 @@ import SymptomHistory from './SymptomHistory';
 
 import LoginScreen from './LoginScreen';
 
+import { usePatientContext } from '@/context/PatientContext';
+
 export default function Dashboard() {
     const [currentUser, setCurrentUser] = useState(null);
+    const { updatePatientData } = usePatientContext();
+
     const [data, setData] = useState({
         disease: "",
+        zipCode: "",
         symptoms: "",
         symptomDate: new Date().toISOString().split('T')[0],
         medicines: []
@@ -29,15 +34,21 @@ export default function Dashboard() {
         const savedHistory = localStorage.getItem(`symptomHistory_${currentUser}`);
 
         if (savedData) {
-            setData(JSON.parse(savedData));
+            const parsedData = JSON.parse(savedData);
+            setData(parsedData);
+            // Sync with global context immediately on load
+            updatePatientData({ disease: parsedData.disease, zipCode: parsedData.zipCode });
         } else {
             // Reset for new user if no data found
-            setData({
+            const initialData = {
                 disease: "",
+                zipCode: "",
                 symptoms: "",
                 symptomDate: new Date().toISOString().split('T')[0],
                 medicines: []
-            });
+            };
+            setData(initialData);
+            updatePatientData({ disease: "", zipCode: "" });
         }
 
         if (savedHistory) {
@@ -54,6 +65,9 @@ export default function Dashboard() {
     useEffect(() => {
         if (!currentUser) return;
         localStorage.setItem(`patientData_${currentUser}`, JSON.stringify(data));
+
+        // Sync vital info with global context for Ads
+        updatePatientData({ disease: data.disease, zipCode: data.zipCode });
     }, [data, currentUser]);
 
     useEffect(() => {
@@ -142,29 +156,35 @@ export default function Dashboard() {
                 </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <DataEntry data={data} onChange={handleDataChange} onSave={handleSave} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                {/* Top Section: Input & History */}
+                <div className="dashboard-top" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        <DataEntry data={data} onChange={handleDataChange} onSave={handleSave} />
 
-                    <button
-                        onClick={handleAnalyze}
-                        disabled={loading}
-                        className="btn btn-primary"
-                        style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
-                    >
-                        {loading ? "Analyzing..." : "Analyze with AI"}
-                    </button>
+                        <button
+                            onClick={handleAnalyze}
+                            disabled={loading}
+                            className="btn btn-primary"
+                            style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
+                        >
+                            {loading ? "Analyzing..." : "Analyze with AI"}
+                        </button>
+                    </div>
 
-                    <SymptomHistory history={history} />
+                    <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
+                        <SymptomHistory history={history} />
+                    </div>
                 </div>
 
-                <div>
+                {/* Bottom Section: AI Output */}
+                <div className="dashboard-bottom">
                     <InsightsViewer insights={insights} isLoading={loading} error={error} />
                 </div>
 
                 <style jsx>{`
         @media (max-width: 768px) {
-          div[style*="grid"] {
+          .dashboard-top {
             grid-template-columns: 1fr !important;
           }
         }

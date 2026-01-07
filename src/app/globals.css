@@ -163,3 +163,179 @@ h3.heading {
         transform: rotate(360deg);
     }
 }
+
+/* App Layout Grid */
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.app-main-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+.app-content {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* Ad Banners */
+.ad-banner {
+    transition: background-color 0.5s ease;
+    border: 1px solid transparent;
+}
+
+/* Ad Types Theme */
+.ad-type-health {
+    background-color: #eff6ff;
+    /* blue-50 */
+    border-color: #bfdbfe;
+    /* blue-200 */
+    color: #1e40af;
+    /* blue-800 */
+}
+
+.ad-type-support {
+    background-color: #f0fdf4;
+    /* green-50 */
+    border-color: #bbf7d0;
+    /* green-200 */
+    color: #166534;
+    /* green-800 */
+}
+
+.ad-type-inhouse {
+    background-color: #faf5ff;
+    /* purple-50 */
+    border-color: #e9d5ff;
+    /* purple-200 */
+    color: #6b21a8;
+    /* purple-800 */
+}
+
+.ad-type-lifestyle {
+    background-color: #fff7ed;
+    /* orange-50 */
+    border-color: #fed7aa;
+    /* orange-200 */
+    color: #9a3412;
+    /* orange-800 */
+}
+
+/* Top Banner */
+.ad-banner-top {
+    width: 100%;
+    padding: 1rem;
+    border-bottom-width: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ad-label {
+    font-size: 0.75rem;
+    /* text-xs */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+    border: 1px solid currentColor;
+    padding: 0 0.25rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+}
+
+.ad-title {
+    font-weight: 600;
+}
+
+.ad-desc {
+    font-size: 0.875rem;
+    /* text-sm */
+    margin-left: 0.25rem;
+}
+
+.ad-link-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    font-size: 0.75rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.ad-link-btn:hover {
+    opacity: 1;
+}
+
+/* Left Banner */
+.ad-banner-left {
+    display: none;
+    /* Hidden on mobile by default */
+    flex-direction: column;
+    width: 16rem;
+    /* w-64 */
+    padding: 1rem;
+    border-right-width: 2px;
+}
+
+/* Right Banner */
+.ad-banner-right {
+    display: none;
+    /* Hidden on mobile by default */
+    flex-direction: column;
+    width: 16rem;
+    /* w-64 */
+    padding: 1rem;
+    border-left-width: 2px;
+}
+
+@media (min-width: 768px) {
+
+    .ad-banner-left,
+    .ad-banner-right {
+        display: flex;
+    }
+}
+
+.ad-label-container {
+    margin-bottom: 1rem;
+}
+
+.ad-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.ad-heading {
+    font-size: 1.25rem;
+    /* text-xl */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.ad-text {
+    font-size: 0.875rem;
+    /* text-sm */
+    margin-bottom: 1rem;
+}
+
+.ad-cta-btn {
+    width: 100%;
+    padding: 0.5rem 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ad-cta-btn:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
